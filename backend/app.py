@@ -6,6 +6,7 @@ from dotenv import load_dotenv
 from flask import Flask, request, g, jsonify
 from flask_cors import CORS
 from flask_restful import Api
+from flask_mail import Mail
 from werkzeug.security import generate_password_hash
 from security import check_authentication, check_authorization
 from ApiException.ApiError import APIError
@@ -19,6 +20,7 @@ from api import (
     AdminDashboardApi,
     CompanyDashboardApi,
     StudentDashboardApi,
+    ExportHistory
 )
 
 from db import db
@@ -33,7 +35,7 @@ app = Flask(__name__)
 app.config.from_pyfile("config.py")
 api = Api(app)
 db.init_app(app)
-
+mail = Mail(app)
 CORS(app, origins="*", supports_credentials=True)
 
 
@@ -81,7 +83,7 @@ api.add_resource(AuthApi, "/api/login/")
 api.add_resource(CompanyDashboardApi, "/api/company_dash_data/<int:id>/")
 api.add_resource(AdminDashboardApi, "/api/admin_dash_data/")
 api.add_resource(StudentDashboardApi, "/api/student_dash_data/<int:id>/")
-
+api.add_resource(ExportHistory, "/api/student/<int:id>/export/")
 
 @app.errorhandler(APIError)
 def handle_api_error(error):

@@ -147,3 +147,10 @@ class ApplicationApi(BaseApi):
             return marshal(applications, application_fields), 200
 
 
+class ExportHistory(Resource):
+    def get(self, id):
+        from celery_tasks.tasks import sent_application_history
+
+        sent_application_history.delay(id)
+
+        return "Application History Successfully sent on mail"
