@@ -13,7 +13,8 @@ from api import (
     CompanyApi,
     JobApi,
     StudentApi,
-    AdminDashboardApi
+    AdminDashboardApi,
+    CompanyDashboardApi,
 )
 
 from db import db
@@ -71,7 +72,7 @@ api.add_resource(
 )
 
 api.add_resource(AuthApi, "/api/login/")
-
+api.add_resource(CompanyDashboardApi, "/api/company_dash_data/<int:id>/")
 api.add_resource(AdminDashboardApi, "/api/admin_dash_data/")
 
 

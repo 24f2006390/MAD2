@@ -8,6 +8,25 @@ from models import Application, Company, Job
 from models.fields import company_fields, job_fields
 
 
+class CompanyDashboardApi(Resource):
+    def get(self, id):
+
+        company = Company.query.filter(Company.id == id).first()
+        jobs = Job.query.join(Company).filter(Company.id == id).all()
+        applications = Application.query.join(Job).filter(Job.company_id == id).all()
+
+        application_count = len(applications)
+        selected_application_ct = len(
+            [app for app in applications if app["status"] == "selected"]
+        )
+
+        return {
+            "company": marshal(company, company_fields),
+            "company_jobs": marshal(jobs, job_fields),
+            "total_app_ct": application_count,
+            "selected_app_ct": selected_application_ct,
+        }, 200
+
 
 class CompanyApi(BaseApi):
     def check_already_exists(self, data):
