@@ -15,6 +15,7 @@ from api import (
     StudentApi,
     AdminDashboardApi,
     CompanyDashboardApi,
+    StudentDashboardApi 
 )
 
 from db import db
@@ -74,6 +75,7 @@ api.add_resource(
 api.add_resource(AuthApi, "/api/login/")
 api.add_resource(CompanyDashboardApi, "/api/company_dash_data/<int:id>/")
 api.add_resource(AdminDashboardApi, "/api/admin_dash_data/")
+api.add_resource(StudentDashboardApi, "/api/student_dash_data/<int:id>/")
 
 
 def admin_setup():

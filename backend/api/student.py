@@ -7,6 +7,32 @@ from db import db
 from models import Application, Company, Job, Student
 from models.fields import application_fields, company_fields, job_fields, student_fields
 
+class StudentDashboardApi(Resource):
+    def get(self, id):
+
+        student = Student.query.filter(Student.id == id).first()
+        companies = Company.query.filter(Company.approval_status == "approved").all()
+        jobs = (
+            Job.query.join(Company)
+            .filter(
+                Company.approval_status == "approved", Job.approval_status == "approved"
+            )
+            .all()
+        )
+        applications = Application.query.filter(Application.student_id == id).all()
+
+        application_count = len(applications)
+        selected_application_ct = len(
+            [app for app in applications if app["status"] == "selected"]
+        )
+
+        return {
+            "student": marshal(student, student_fields),
+            "companies": marshal(companies, company_fields),
+            "jobs": marshal(jobs, job_fields),
+            "total_app_ct": application_count,
+            "selected_app_ct": selected_application_ct,
+        }, 200
 
 
 # Handles student routes
