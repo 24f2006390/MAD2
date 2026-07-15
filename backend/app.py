@@ -1,11 +1,14 @@
 import os
+import time
+
 
 from dotenv import load_dotenv
-from flask import Flask
+from flask import Flask, request, g, jsonify
 from flask_cors import CORS
 from flask_restful import Api
 from werkzeug.security import generate_password_hash
-
+from security import check_authentication, check_authorization
+from ApiException.ApiError import APIError
 
 from api import (
     ApplicationApi,
@@ -15,7 +18,7 @@ from api import (
     StudentApi,
     AdminDashboardApi,
     CompanyDashboardApi,
-    StudentDashboardApi 
+    StudentDashboardApi,
 )
 
 from db import db
@@ -30,6 +33,8 @@ app = Flask(__name__)
 app.config.from_pyfile("config.py")
 api = Api(app)
 db.init_app(app)
+
+CORS(app, origins="*", supports_credentials=True)
 
 
 api.add_resource(
@@ -77,6 +82,51 @@ api.add_resource(CompanyDashboardApi, "/api/company_dash_data/<int:id>/")
 api.add_resource(AdminDashboardApi, "/api/admin_dash_data/")
 api.add_resource(StudentDashboardApi, "/api/student_dash_data/<int:id>/")
 
+
+@app.errorhandler(APIError)
+def handle_api_error(error):
+    response = jsonify(error.message_dict)
+    response.status_code = error.status_code
+    return response
+
+
+UNAUTHENTICATED_ROUTES = {
+    ("POST", "/api/login/"),
+    ("POST", "/api/student/"),
+    ("POST", "/api/company/"),
+}
+
+
+@app.before_request
+def before():
+
+    g.start_time = time.perf_counter()
+    # unregistered 404 routes
+    if request.url_rule is None:
+        return
+
+    if (request.method.upper(), request.path) in UNAUTHENTICATED_ROUTES:
+        return
+
+    if request.method.lower() == "options":
+        return
+
+    if request.path.startswith(("static", "/static")):
+        return
+
+    check_authentication()
+
+    check_authorization()
+
+
+@app.after_request
+def after(response):
+    if request.url_rule is None:
+        return response
+
+    response.headers["X-Response-Time"] = (
+        str(time.perf_counter() - g.start_time) + " seconds"
+    )
 
 
 def admin_setup():
