@@ -78,6 +78,7 @@ api.add_resource(AdminDashboardApi, "/api/admin_dash_data/")
 api.add_resource(StudentDashboardApi, "/api/student_dash_data/<int:id>/")
 
 
+
 def admin_setup():
 
     password = os.getenv("ADMIN_PASSWORD")
