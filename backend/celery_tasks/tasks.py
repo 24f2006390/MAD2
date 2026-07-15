@@ -126,6 +126,7 @@ def sent_application_history(id):
         Regards,
         Placement Portal
         """
+
         with open(filepath, "r") as f:
             msg.attach(filename, "text/csv", f.read())
         mail.send(msg)

@@ -32,7 +32,7 @@ let job_endpoint = computed(() => {
     if (role.value != "admin") {
         return `/${role.value}/${user.value.id}/jobs/`;
     } else {
-        return "/applications/";
+        return "/jobs/";
     }
 });
 </script>

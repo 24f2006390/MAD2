@@ -37,13 +37,7 @@ class StudentDashboardApi(Resource):
 
 # Handles student routes
 class StudentApi(BaseApi):
-    def check_already_exists(self, data):
-
-        student = Student.query.filter(Student.id == id).first()
-
-        if student is not None:
-            raise ValidationError({"error": "student already exists"}, 409)
-
+  
     def patch(self, id):
         if "photo" in request.files:
             file = request.files["photo"]

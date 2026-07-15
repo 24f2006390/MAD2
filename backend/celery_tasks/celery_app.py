@@ -12,11 +12,11 @@ from celery_tasks import tasks
 celery.conf.beat_schedule = {
     "print-every-minute": {
         "task": "celery_tasks.tasks.send_daily_emails",
-        "schedule": 60.0,
+        "schedule": crontab(hour=6,minute=0),
     },
     "Monthy-admin-report": {
         "task": "celery_tasks.tasks.send_admin_report",
-        "schedule": 10.0,
+        "schedule": crontab( day_of_month=1,hour=0,minute=0 ),
     },
 }
 
