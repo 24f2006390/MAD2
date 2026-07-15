@@ -28,6 +28,7 @@ from models import Admin, Application, Company, Job, Student
 from models.fields import application_fields, company_fields, job_fields, student_fields
 from models.schema import ApplicationSchema, CompanySchema, JobSchema, StudentSchema
 
+from redis_caching import fetch_cached_response , cache_response
 
 load_dotenv()
 
@@ -119,6 +120,8 @@ def before():
     check_authentication()
 
     check_authorization()
+    return fetch_cached_response()
+
 
 
 @app.after_request
@@ -129,6 +132,8 @@ def after(response):
     response.headers["X-Response-Time"] = (
         str(time.perf_counter() - g.start_time) + " seconds"
     )
+    return cache_response(response)
+
 
 
 def admin_setup():
