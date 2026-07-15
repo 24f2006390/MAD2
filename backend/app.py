@@ -13,6 +13,7 @@ from api import (
     CompanyApi,
     JobApi,
     StudentApi,
+    AdminDashboardApi
 )
 
 from db import db
@@ -71,7 +72,7 @@ api.add_resource(
 
 api.add_resource(AuthApi, "/api/login/")
 
-
+api.add_resource(AdminDashboardApi, "/api/admin_dash_data/")
 
 
 def admin_setup():
